@@ -31,6 +31,21 @@ const App = () => {
     return str.substring(0, 6) + "..." + str.substring(str.length - 4);
   };
 
+    // Now, we combine the memberAddresses and memberTokenAmounts into a single array
+    const memberList = useMemo(() => {
+      return memberAddresses.map((address) => {
+        return {
+          address,
+          tokenAmount: ethers.utils.formatUnits(
+            // If the address isn't in memberTokenAmounts, it means they don't
+            // hold any of our token.
+            memberTokenAmounts[address] || 0,
+            18,
+          ),
+        };
+      });
+    }, [memberAddresses, memberTokenAmounts]);
+
   const mintNft = () => {
     setIsClaiming(true);
     // Call bundleDropModule.claim("0", 1) to mint nft to user's wallet.
@@ -165,21 +180,6 @@ const App = () => {
       </div>
     );
   }
-
-  // Now, we combine the memberAddresses and memberTokenAmounts into a single array
-  const memberList = useMemo(() => {
-    return memberAddresses.map((address) => {
-      return {
-        address,
-        tokenAmount: ethers.utils.formatUnits(
-          // If the address isn't in memberTokenAmounts, it means they don't
-          // hold any of our token.
-          memberTokenAmounts[address] || 0,
-          18,
-        ),
-      };
-    });
-  }, [memberAddresses, memberTokenAmounts]);
 
   console.log("Address:", address);
 
